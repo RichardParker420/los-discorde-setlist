@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ banda.nombre }} - Setlist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #121212; color: #ffffff; font-family: sans-serif; }
+        .cancion-card { background-color: #1e1e1e; border-radius: 8px; margin-bottom: 1rem; }
+        .letra { display: none; white-space: pre-line; color: #b3b3b3; padding: 1rem; border-top: 1px solid #333; }
+    </style>
+</head>
+<body class="p-4">
+    <header class="text-center py-6">
+        <img src="{{ banda.imagen_url }}" alt="Foto de {{ banda.nombre }}" class="mx-auto rounded-lg mb-4">
+        <h1 class="text-3xl font-bold text-yellow-500">{{ banda.nombre }}</h1>
+        <p class="text-gray-400">Escanea el QR y sigue la letra en vivo</p>
+    </header>
+
+    <main class="max-w-md mx-auto">
+        {% for item in banda.setlist %}
+        <div class="cancion-card">
+            <button
+                onclick="toggleLetra({{ loop.index }})"
+                class="w-full text-left p-4 font-semibold text-lg flex justify-between items-center"
+                aria-expanded="false"
+                id="btn-{{ loop.index }}"
+            >
+                {{ loop.index }}. {{ item.titulo }}
+                {# FIX: id y class separados correctamente #}
+                <span id="icon-{{ loop.index }}" class="text-yellow-500">+</span>
+            </button>
+            <div id="letra-{{ loop.index }}" class="letra">
+                {{ item.letra }}
+            </div>
+        </div>
+        {% endfor %}
+    </main>
+
+    <script>
+        function toggleLetra(id) {
+            const el = document.getElementById('letra-' + id);
+            const icon = document.getElementById('icon-' + id);
+            const btn = document.getElementById('btn-' + id);
+
+            // FIX: comparar con '' cubre el estado inicial (nunca fue asignado inline)
+            const estaAbierto = el.style.display === 'block';
+
+            if (estaAbierto) {
+                el.style.display = 'none';
+                // FIX: actualizar el ícono visualmente
+                icon.textContent = '+';
+                btn.setAttribute('aria-expanded', 'false');
+            } else {
+                el.style.display = 'block';
+                // FIX: actualizar el ícono visualmente
+                icon.textContent = '−';
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        }
+    </script>
+</body>
+</html>
